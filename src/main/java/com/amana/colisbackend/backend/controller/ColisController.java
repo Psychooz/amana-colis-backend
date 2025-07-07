@@ -70,6 +70,30 @@ public class ColisController {
         return ResponseEntity.ok(statistics);
     }
 
+
+    @GetMapping("/client/{clientId}/statistics/filtered")
+    public ResponseEntity<StatisticsDTO> getFilteredStatistics(
+            @PathVariable Long clientId,
+            @RequestParam(required = false) String codeEnvoi,
+            @RequestParam(required = false) String telDestinataire,
+            @RequestParam(required = false) StatusColis status,
+            @RequestParam(required = false) String destination,
+            @RequestParam(required = false) Boolean isPayed,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDepotStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDepotEnd,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStatutStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStatutEnd,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePaiementStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePaiementEnd) {
+
+        StatisticsDTO statistics = colisService.getFilteredStatistics(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+        return ResponseEntity.ok(statistics);
+    }
+
     @GetMapping("/status-values")
     public ResponseEntity<StatusColis[]> getStatusValues() {
         return ResponseEntity.ok(StatusColis.values());

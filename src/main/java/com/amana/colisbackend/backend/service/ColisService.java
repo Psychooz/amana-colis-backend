@@ -136,6 +136,105 @@ public class ColisService {
         return stats;
     }
 
+    public StatisticsDTO getFilteredStatistics(
+            Long clientId,
+            String codeEnvoi,
+            String telDestinataire,
+            StatusColis status,
+            String destination,
+            Boolean isPayed,
+            LocalDate dateDepotStart,
+            LocalDate dateDepotEnd,
+            LocalDate dateStatutStart,
+            LocalDate dateStatutEnd,
+            LocalDate datePaiementStart,
+            LocalDate datePaiementEnd) {
+
+        StatisticsDTO stats = new StatisticsDTO();
+
+        // Get filtered colis count and CRBT
+        Long totalColis = colisRepository.countByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        BigDecimal totalCrbt = colisRepository.sumCrbtByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        stats.setTotalColis(totalColis != null ? totalColis : 0L);
+        stats.setTotalCrbt(totalCrbt != null ? totalCrbt : BigDecimal.ZERO);
+        stats.setTotalEnvoisPeriode(totalColis);
+        stats.setTotalCrbtPeriode(totalCrbt);
+
+        // Status statistics with filters
+        List<Object[]> statusResults = colisRepository.countByStatusGroupByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        Map<String, Long> statusStats = new HashMap<>();
+        for (Object[] result : statusResults) {
+            StatusColis statusEnum = (StatusColis) result[0];
+            Long count = (Long) result[1];
+            statusStats.put(statusEnum.getDisplayName(), count);
+        }
+        stats.setStatusStats(statusStats);
+
+        // Payment statistics with filters
+        List<Object[]> paymentResults = colisRepository.countByPaymentStatusGroupByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        Map<String, Long> paymentStats = new HashMap<>();
+        for (Object[] result : paymentResults) {
+            Boolean isPayedResult = (Boolean) result[0];
+            Long count = (Long) result[1];
+            paymentStats.put(isPayedResult ? "Payé" : "Impayé", count);
+        }
+        stats.setPaymentStats(paymentStats);
+
+        // Monthly statistics with filters
+        List<Object[]> monthlyResults = colisRepository.getMonthlyStatsByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        List<StatisticsDTO.MonthlyStatsDTO> monthlyStats = monthlyResults.stream()
+                .map(result -> new StatisticsDTO.MonthlyStatsDTO(
+                        (Integer) result[0], // year
+                        (Integer) result[1], // month
+                        (Long) result[2],    // count
+                        (BigDecimal) result[3] // sum
+                ))
+                .collect(Collectors.toList());
+        stats.setMonthlyStats(monthlyStats);
+
+        // City statistics with filters
+        List<Object[]> cityResults = colisRepository.countByDestinationGroupByClientIdWithFilters(
+                clientId, codeEnvoi, telDestinataire, status, destination, isPayed,
+                dateDepotStart, dateDepotEnd, dateStatutStart, dateStatutEnd,
+                datePaiementStart, datePaiementEnd
+        );
+
+        Map<String, Long> cityStats = new HashMap<>();
+        for (Object[] result : cityResults) {
+            String destinationResult = (String) result[0];
+            Long count = (Long) result[1];
+            cityStats.put(destinationResult, count);
+        }
+        stats.setCityStats(cityStats);
+
+        return stats;
+    }
+
     private ColisDTO convertToDTO(Colis colis) {
         ColisDTO dto = new ColisDTO();
         dto.setId(colis.getId());

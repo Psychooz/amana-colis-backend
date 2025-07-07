@@ -85,4 +85,173 @@ public interface ColisRepository extends JpaRepository<Colis, Long> {
             @Param("datePaiementStart") LocalDate datePaiementStart,
             @Param("datePaiementEnd") LocalDate datePaiementEnd,
             Pageable pageable);
+
+    // Count with filters
+    @Query("SELECT COUNT(c) FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd)")
+    Long countByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
+    // Sum CRBT with filters
+    @Query("SELECT SUM(c.crbt) FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd)")
+    BigDecimal sumCrbtByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
+    // Status stats with filters
+    @Query("SELECT c.status, COUNT(c) FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd) " +
+            "GROUP BY c.status")
+    List<Object[]> countByStatusGroupByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
+    // Payment stats with filters
+    @Query("SELECT c.isPayed, COUNT(c) FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd) " +
+            "GROUP BY c.isPayed")
+    List<Object[]> countByPaymentStatusGroupByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
+    // Monthly stats with filters
+    @Query("SELECT YEAR(c.dateDepot), MONTH(c.dateDepot), COUNT(c), SUM(c.crbt) " +
+            "FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd) " +
+            "GROUP BY YEAR(c.dateDepot), MONTH(c.dateDepot) " +
+            "ORDER BY YEAR(c.dateDepot), MONTH(c.dateDepot)")
+    List<Object[]> getMonthlyStatsByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
+    // City stats with filters
+    @Query("SELECT c.destination, COUNT(c) FROM Colis c WHERE c.client.id = :clientId " +
+            "AND (:codeEnvoi IS NULL OR c.codeEnvoi LIKE %:codeEnvoi%) " +
+            "AND (:telDestinataire IS NULL OR c.telDestinataire LIKE %:telDestinataire%) " +
+            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (:destination IS NULL OR c.destination LIKE %:destination%) " +
+            "AND (:isPayed IS NULL OR c.isPayed = :isPayed) " +
+            "AND (:dateDepotStart IS NULL OR c.dateDepot >= :dateDepotStart) " +
+            "AND (:dateDepotEnd IS NULL OR c.dateDepot <= :dateDepotEnd) " +
+            "AND (:dateStatutStart IS NULL OR c.dateStatut >= :dateStatutStart) " +
+            "AND (:dateStatutEnd IS NULL OR c.dateStatut <= :dateStatutEnd) " +
+            "AND (:datePaiementStart IS NULL OR c.datePaiement >= :datePaiementStart) " +
+            "AND (:datePaiementEnd IS NULL OR c.datePaiement <= :datePaiementEnd) " +
+            "GROUP BY c.destination")
+    List<Object[]> countByDestinationGroupByClientIdWithFilters(
+            @Param("clientId") Long clientId,
+            @Param("codeEnvoi") String codeEnvoi,
+            @Param("telDestinataire") String telDestinataire,
+            @Param("status") StatusColis status,
+            @Param("destination") String destination,
+            @Param("isPayed") Boolean isPayed,
+            @Param("dateDepotStart") LocalDate dateDepotStart,
+            @Param("dateDepotEnd") LocalDate dateDepotEnd,
+            @Param("dateStatutStart") LocalDate dateStatutStart,
+            @Param("dateStatutEnd") LocalDate dateStatutEnd,
+            @Param("datePaiementStart") LocalDate datePaiementStart,
+            @Param("datePaiementEnd") LocalDate datePaiementEnd);
+
 }
